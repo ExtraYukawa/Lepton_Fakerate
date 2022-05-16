@@ -1,3 +1,11 @@
+#==============
+# Last used:
+# python mu_fr.py --era 2016APV
+# python mu_fr.py --era 2016postAPV
+# python mu_fr.py --era 2017
+# python mu_fr.py --era 2018
+#==============
+
 import ROOT
 import time
 import os
