@@ -7,7 +7,7 @@ CMSTDRStyle.setTDRStyle().cd()
 import CMSstyle
 from array import array
 
-def draw_plots(hist_nume =[], hist_deno =[], data=1):
+def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 
 	if data:
 	  h_data_denominator=hist_deno[0]
@@ -156,13 +156,13 @@ def draw_plots(hist_nume =[], hist_deno =[], data=1):
 	fileout.Close()
 
 
-	CMSstyle.SetStyle(pad)
+	CMSstyle.SetStyle(pad, opts.era) #fixme gkole
 	pad.SetRightMargin(0.15)
 	c1.SetGridx(False);
 	c1.SetGridy(False);
 	c1.Update()
-	c1.SaveAs('fakerate_data.pdf')
-	c1.SaveAs('fakerate_data.png')
+	c1.SaveAs('fakerate_data_'+opts.era+'.pdf')
+	c1.SaveAs('fakerate_data_'+opts.era+'.png')
 	#c1.SaveAs('fakerate.pdf')
 	#c1.SaveAs('fakerate.png')
 	return c1
