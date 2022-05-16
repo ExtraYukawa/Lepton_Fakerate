@@ -57,10 +57,11 @@ float extract_jet_mass(rvec_f mass_arr, int jid){
 	return mass_arr[jid];
 }
 
+// How does this vary with years? 
 float MC_eff_lumi(float l1_pt){
         float lumi=1.;
         if(l1_pt<30) lumi=2.454;
-        else lumi=69.746;
+        else lumi=69.746; 
         return lumi;
 }
 
