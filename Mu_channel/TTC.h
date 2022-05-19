@@ -57,11 +57,33 @@ float extract_jet_mass(rvec_f mass_arr, int jid){
 	return mass_arr[jid];
 }
 
-// How does this vary with years? 
-float MC_eff_lumi(float l1_pt){
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/HLTPathsRunIIList
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/HLTStandAlonePrescaleInformation
+float MC_eff_lumi_2016APV(float l1_pt){
+        float lumi=1.;
+        if(l1_pt<30) lumi=3.960;
+        else lumi=285.60; // too high? 
+        return lumi;
+}
+
+float MC_eff_lumi_2016postAPV(float l1_pt){
+        float lumi=1.;
+        if(l1_pt<30) lumi=3.960;
+        else lumi=285.60; // too high?
+        return lumi;
+}
+
+float MC_eff_lumi_2017(float l1_pt){
         float lumi=1.;
         if(l1_pt<30) lumi=2.454;
         else lumi=69.746; 
+        return lumi;
+}
+
+float MC_eff_lumi_2018(float l1_pt){
+        float lumi=1.;
+        if(l1_pt<30) lumi=8.564; 
+        else lumi=45.840;
         return lumi;
 }
 
