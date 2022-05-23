@@ -57,7 +57,7 @@ def get_mcEventnumber(filename):
   return nevent_temp
 
 def trigger(df):
-  all_trigger = df.Filter("(HLT_Mu8 && l1_pt<30) || (HLT_Mu17 && l1_pt>30)")
+  all_trigger = df.Filter("(HLT_Mu8_TrkIsoVVL && l1_pt<25) || (HLT_Mu17_TrkIsoVVL && l1_pt>25)")
   return all_trigger
 
 
