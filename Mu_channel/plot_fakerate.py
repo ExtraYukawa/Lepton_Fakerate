@@ -49,7 +49,7 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 	  h_QCD800to1000_nume=hist_nume[10]
 	  h_QCD1000toInf_nume=hist_nume[11]
 
-	fileo1 = ROOT.TFile('histos.root', 'RECREATE')
+	fileo1 = ROOT.TFile('histos_mu_'+opts.era+'.root', 'RECREATE') 
 	fileo1.cd()
 
 	if data:
@@ -149,22 +149,21 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 	h_nume.Divide(h_deno)
 	h_nume.Draw('COL TEXT E')
 
-	fileout = ROOT.TFile('fr_data.root', 'RECREATE')
+	fileout = ROOT.TFile('fr_data_mu_'+opts.era+'.root', 'RECREATE')
 	#fileout = ROOT.TFile('fr.root', 'RECREATE')
 	fileout.cd()
 	h_nume.Write()
 	fileout.Close()
 
 
-	CMSstyle.SetStyle(pad, opts.era) #fixme gkole
+	CMSstyle.SetStyle(pad, opts.era) 
 	pad.SetRightMargin(0.15)
 	c1.SetGridx(False);
 	c1.SetGridy(False);
 	c1.Update()
-	c1.SaveAs('fakerate_data_'+opts.era+'.pdf')
-	c1.SaveAs('fakerate_data_'+opts.era+'.png')
-	#c1.SaveAs('fakerate.pdf')
-	#c1.SaveAs('fakerate.png')
+	c1.SaveAs('fakerate_data_mu_'+opts.era+'.pdf')
+	c1.SaveAs('fakerate_data_mu_'+opts.era+'.png')
+
 	return c1
 	pad.Close()
 	del hist_nume
