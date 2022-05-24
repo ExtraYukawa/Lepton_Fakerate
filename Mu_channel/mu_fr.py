@@ -57,7 +57,11 @@ def get_mcEventnumber(filename):
   return nevent_temp
 
 def trigger(df):
-  all_trigger = df.Filter("(HLT_Mu8_TrkIsoVVL && l1_pt<25) || (HLT_Mu17_TrkIsoVVL && l1_pt>25)")
+  if opts.era == "2017":
+    all_trigger = df.Filter("(HLT_Mu8_TrkIsoVVL && l1_conept < 25) || (HLT_Mu17_TrkIsoVVL && l1_conept > 25)")
+  else:
+    all_trigger = df.Filter("(HLT_Mu8_TrkIsoVVL && l1_pt < 25) || (HLT_Mu17_TrkIsoVVL && l1_pt > 25)")
+
   return all_trigger
 
 
@@ -151,17 +155,26 @@ def Fakerate_Analysis(opts):
   df_DoubleMu_deno_tree = df_DoubleMu_deno_tree.Define("abs_l1eta","abs(l1_eta)")
   df_DoubleMu_deno = df_DoubleMu_deno_tree.Filter(filters_denominator)
   df_DoubleMu_deno_trigger = trigger(df_DoubleMu_deno)
-  df_DoubleMu_deno_histo = df_DoubleMu_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt")
+  if opts.era == "2017":
+    df_DoubleMu_deno_histo = df_DoubleMu_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_conept")
+  else:
+    df_DoubleMu_deno_histo = df_DoubleMu_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt")
 
   df_DoubleMu_nume_tree = ROOT.RDataFrame("Events", doubleMu_names)
   df_DoubleMu_nume_tree = df_DoubleMu_nume_tree.Define("abs_l1eta","abs(l1_eta)")
   df_DoubleMu_nume = df_DoubleMu_nume_tree.Filter(filters_numerator)
   df_DoubleMu_nume_trigger = trigger(df_DoubleMu_nume)
-  df_DoubleMu_nume_histo = df_DoubleMu_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt")
+  if opts.era == "2017":
+    df_DoubleMu_nume_histo = df_DoubleMu_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept")
+  else:
+    df_DoubleMu_nume_histo = df_DoubleMu_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt")
 
   df_DY_deno_tree = ROOT.RDataFrame("Events",DY_list)
   df_DY_deno_tree = df_DY_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_DY_deno_tree = df_DY_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_DY_deno_tree = df_DY_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_DY_deno_tree = df_DY_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_DY_deno_tree = df_DY_deno_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -170,15 +183,21 @@ def Fakerate_Analysis(opts):
 
   df_DY_deno = df_DY_deno_tree.Filter(filters_denominator)
   df_DY_deno_trigger = trigger(df_DY_deno)
-  df_DY_deno_histo = df_DY_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_DY_deno_histo = df_DY_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_DY_deno_histo = df_DY_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt",'genweight')
   
-  # aa = df_DY_deno_histo.GetValue()
-  # print "aa.Integral()", aa.Integral()
-  # sys.exit(1)
-
+  #aa = df_DY_deno_histo.GetValue()
+  #print "aa.Integral()", aa.Integral()
+  #sys.exit(1)
+   
   df_DY_nume_tree = ROOT.RDataFrame("Events",DY_list)
   df_DY_nume_tree = df_DY_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_DY_nume_tree = df_DY_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_DY_nume_tree = df_DY_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_DY_nume_tree = df_DY_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_DY_nume_tree = df_DY_nume_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -186,11 +205,17 @@ def Fakerate_Analysis(opts):
     df_DY_nume_tree = df_DY_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_DY_nume = df_DY_nume_tree.Filter(filters_numerator)
   df_DY_nume_trigger = trigger(df_DY_nume)
-  df_DY_nume_histo = df_DY_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_DY_nume_histo = df_DY_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_DY_nume_histo = df_DY_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
   df_WJet_deno_tree = ROOT.RDataFrame("Events",WJet_list)
   df_WJet_deno_tree = df_WJet_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_WJet_deno_tree = df_WJet_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_WJet_deno_tree = df_WJet_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_WJet_deno_tree = df_WJet_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_WJet_deno_tree = df_WJet_deno_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -198,23 +223,35 @@ def Fakerate_Analysis(opts):
     df_WJet_deno_tree = df_WJet_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_WJet_deno = df_WJet_deno_tree.Filter(filters_denominator)
   df_WJet_deno_trigger = trigger(df_WJet_deno)
-  df_WJet_deno_histo = df_WJet_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_WJet_deno_histo = df_WJet_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_WJet_deno_histo = df_WJet_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt",'genweight')
 
   df_WJet_nume_tree = ROOT.RDataFrame("Events",WJet_list)
   df_WJet_nume_tree = df_WJet_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_WJet_nume_tree = df_WJet_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
-  
+  if opts.era == "2017":
+    df_WJet_nume_tree = df_WJet_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_WJet_nume_tree = df_WJet_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+
   if opts.era == "2018":
     df_WJet_nume_tree = df_WJet_nume_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
   else:
     df_WJet_nume_tree = df_WJet_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_WJet_nume = df_WJet_nume_tree.Filter(filters_numerator)
   df_WJet_nume_trigger = trigger(df_WJet_nume)
-  df_WJet_nume_histo = df_WJet_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_WJet_nume_histo = df_WJet_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_WJet_nume_histo = df_WJet_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
   df_TTTo1L_deno_tree = ROOT.RDataFrame("Events",TTTo1L_list)
   df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -222,11 +259,17 @@ def Fakerate_Analysis(opts):
     df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_TTTo1L_deno = df_TTTo1L_deno_tree.Filter(filters_denominator)
   df_TTTo1L_deno_trigger = trigger(df_TTTo1L_deno)
-  df_TTTo1L_deno_histo = df_TTTo1L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_TTTo1L_deno_histo = df_TTTo1L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_TTTo1L_deno_histo = df_TTTo1L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
   df_TTTo1L_nume_tree = ROOT.RDataFrame("Events",TTTo1L_list)
   df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -234,11 +277,17 @@ def Fakerate_Analysis(opts):
     df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_TTTo1L_nume = df_TTTo1L_nume_tree.Filter(filters_numerator)
   df_TTTo1L_nume_trigger = trigger(df_TTTo1L_nume)
-  df_TTTo1L_nume_histo = df_TTTo1L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_TTTo1L_nume_histo = df_TTTo1L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_TTTo1L_nume_histo = df_TTTo1L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
   df_TTTo2L_deno_tree = ROOT.RDataFrame("Events",TTTo2L_list)
   df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -246,11 +295,17 @@ def Fakerate_Analysis(opts):
     df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_TTTo2L_deno = df_TTTo2L_deno_tree.Filter(filters_denominator)
   df_TTTo2L_deno_trigger = trigger(df_TTTo2L_deno)
-  df_TTTo2L_deno_histo = df_TTTo2L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_TTTo2L_deno_histo = df_TTTo2L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_TTTo2L_deno_histo = df_TTTo2L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
   df_TTTo2L_nume_tree = ROOT.RDataFrame("Events",TTTo2L_list)
   df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+  if opts.era == "2017":
+    df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+  else:
+    df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
   
   if opts.era == "2018":
     df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)")
@@ -258,7 +313,10 @@ def Fakerate_Analysis(opts):
     df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
   df_TTTo2L_nume = df_TTTo2L_nume_tree.Filter(filters_numerator)
   df_TTTo2L_nume_trigger = trigger(df_TTTo2L_nume)
-  df_TTTo2L_nume_histo = df_TTTo2L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
+  if opts.era == "2017":
+    df_TTTo2L_nume_histo = df_TTTo2L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_conept",'genweight')
+  else:
+    df_TTTo2L_nume_histo = df_TTTo2L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
 #  df_tsch_tree = ROOT.RDataFrame("Events",tsch_list)
 #  df_tsch_tree = df_tsch_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
