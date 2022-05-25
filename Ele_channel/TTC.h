@@ -57,13 +57,35 @@ float extract_jet_mass(rvec_f mass_arr, int jid){
 	return mass_arr[jid];
 }
 
-float MC_eff_lumi(float l1_pt){
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/HLTPathsRunIIList
+// https://twiki.cern.ch/twiki/bin/viewauth/CMS/HLTStandAlonePrescaleInformation
+float MC_eff_lumi_2016APV(float l1_pt){
+  float lumi=1.;
+  if(l1_pt<25) lumi=11.02;
+  else lumi=52.75; 
+  return lumi;
+}
+
+float MC_eff_lumi_2016postAPV(float l1_pt){
+  float lumi=1.;
+  if(l1_pt<25) lumi=3.98;
+  else lumi=10.70; 
+  return lumi;
+}
+
+float MC_eff_lumi_2017(float l1_pt){
 	float lumi=1.;
-	if(l1_pt<35) lumi=35.371;
-	else lumi=37.993;
+	if(l1_pt<35) lumi=27.51;
+	else lumi=43.24;
 	return lumi;
 }
 
+float MC_eff_lumi_2018(float l1_pt){
+	float lumi=1.;
+	if(l1_pt<35) lumi=38.91;
+	else lumi=38.96;
+	return lumi;
+}
 int reco_eleid(int ntight, int tight_id, int fakeable_id)
 {
         if(ntight==1) return tight_id;

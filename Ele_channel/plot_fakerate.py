@@ -7,7 +7,7 @@ CMSTDRStyle.setTDRStyle().cd()
 import CMSstyle
 from array import array
 
-def draw_plots(hist_nume =[], hist_deno =[], data=1):
+def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 
 	if data:
 	  h_data_denominator=hist_deno[0]
@@ -53,7 +53,7 @@ def draw_plots(hist_nume =[], hist_deno =[], data=1):
 	  h_bctoe_QCD170to250_nume=hist_nume[12]
 	  h_bctoe_QCD250toInf_nume=hist_nume[13]
 
-	fileo1 = ROOT.TFile('histos.root', 'RECREATE')
+	fileo1 = ROOT.TFile('histos_ele_'+opts.era+'.root', 'RECREATE')
 	fileo1.cd()
 	if data:
 	  h_data_denominator.Write()
@@ -154,20 +154,20 @@ def draw_plots(hist_nume =[], hist_deno =[], data=1):
 	h_nume.Divide(h_deno)
 	h_nume.Draw('COL TEXT E')
 
-	fileout = ROOT.TFile('fr_data.root', 'RECREATE')
+	fileout = ROOT.TFile('fr_data_ele_'+opts.era+'.root', 'RECREATE')
 	#fileout = ROOT.TFile('fr.root', 'RECREATE')
 	fileout.cd()
 	h_nume.Write()
 	fileout.Close()
 
 
-	CMSstyle.SetStyle(pad)
+	CMSstyle.SetStyle(pad, opts.era)
 	pad.SetRightMargin(0.15)
 	c1.SetGridx(False);
 	c1.SetGridy(False);
 	c1.Update()
-	c1.SaveAs('fakerate_data.pdf')
-	c1.SaveAs('fakerate_data.png')
+	c1.SaveAs('fakerate_data_ele_'+opts.era+'.pdf')
+	c1.SaveAs('fakerate_data_ele_'+opts.era+'.png')
 	#c1.SaveAs('fakerate.pdf')
 	#c1.SaveAs('fakerate.png')
 	return c1
