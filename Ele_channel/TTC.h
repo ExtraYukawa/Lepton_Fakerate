@@ -61,28 +61,28 @@ float extract_jet_mass(rvec_f mass_arr, int jid){
 // https://twiki.cern.ch/twiki/bin/viewauth/CMS/HLTStandAlonePrescaleInformation
 float MC_eff_lumi_2016APV(float l1_pt){
   float lumi=1.;
-  if(l1_pt<25) lumi=11.02;
+  if(l1_pt<30) lumi=11.02;
   else lumi=52.75; 
   return lumi;
 }
 
 float MC_eff_lumi_2016postAPV(float l1_pt){
   float lumi=1.;
-  if(l1_pt<25) lumi=3.98;
+  if(l1_pt<30) lumi=3.98;
   else lumi=10.70; 
   return lumi;
 }
 
 float MC_eff_lumi_2017(float l1_pt){
 	float lumi=1.;
-	if(l1_pt<35) lumi=27.51;
+	if(l1_pt<30) lumi=27.51;
 	else lumi=43.24;
 	return lumi;
 }
 
 float MC_eff_lumi_2018(float l1_pt){
 	float lumi=1.;
-	if(l1_pt<35) lumi=38.91;
+	if(l1_pt<30) lumi=38.91;
 	else lumi=38.96;
 	return lumi;
 }

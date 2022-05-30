@@ -57,9 +57,9 @@ def get_mcEventnumber(filename):
 
 def trigger(df):
   if opts.era == "2017":
-    all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_conept< 25) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_conept > 25)")
+    all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_conept< 30) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_conept > 30)")
   else:
-    all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt< 25) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt > 25)")
+    all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt< 30) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt > 30)")
   return all_trigger
 
 
