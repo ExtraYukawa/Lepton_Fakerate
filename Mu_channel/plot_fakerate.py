@@ -1,6 +1,8 @@
 import ROOT
 import numpy as np
 from ROOT import kFALSE
+import datetime
+import os
 
 import CMSTDRStyle
 CMSTDRStyle.setTDRStyle().cd()
@@ -48,8 +50,16 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 	  h_QCD600to800_nume=hist_nume[9]
 	  h_QCD800to1000_nume=hist_nume[10]
 	  h_QCD1000toInf_nume=hist_nume[11]
+          
+        # save all output inside a directory
+        if opts.saveDir == None:
+                opts.saveDir = datetime.datetime.now().strftime("%d%b%YT%H%M")
 
-	fileo1 = ROOT.TFile('histos_mu_'+opts.era+'.root', 'RECREATE') 
+        if not os.path.exists(opts.saveDir):
+                print ("save direcotry does not exits! so creating", opts.saveDir)
+                os.mkdir(opts.saveDir)
+                
+        fileo1 = ROOT.TFile(opts.saveDir+'/histos_mu_'+opts.era+'.root', 'RECREATE') 
 	fileo1.cd()
 
 	if data:
@@ -149,7 +159,7 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 	h_nume.Divide(h_deno)
 	h_nume.Draw('COL TEXT E')
 
-	fileout = ROOT.TFile('fr_data_mu_'+opts.era+'.root', 'RECREATE')
+	fileout = ROOT.TFile(opts.saveDir+'/fr_data_mu_'+opts.era+'.root', 'RECREATE')
 	#fileout = ROOT.TFile('fr.root', 'RECREATE')
 	fileout.cd()
 	h_nume.Write()
@@ -161,8 +171,8 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 	c1.SetGridx(False);
 	c1.SetGridy(False);
 	c1.Update()
-	c1.SaveAs('fakerate_data_mu_'+opts.era+'.pdf')
-	c1.SaveAs('fakerate_data_mu_'+opts.era+'.png')
+	c1.SaveAs(opts.saveDir+'/fakerate_data_mu_'+opts.era+'.pdf')
+	c1.SaveAs(opts.saveDir+'/fakerate_data_mu_'+opts.era+'.png')
 
 	return c1
 	pad.Close()
