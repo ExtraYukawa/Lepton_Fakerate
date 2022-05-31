@@ -1,9 +1,9 @@
 #==============
 # Last used:
-# python ele_fr.py --era 2016APV
-# python ele_fr.py --era 2016postAPV
-# python ele_fr.py --era 2017
-# python ele_fr.py --era 2018
+# python ele_fr.py --era 2016APV --saveDir Ele_config1
+# python ele_fr.py --era 2016postAPV --saveDir Ele_config1
+# python ele_fr.py --era 2017 --saveDir Ele_config1
+# python ele_fr.py --era 2018 --saveDir Ele_config1
 #==============
 
 import ROOT
@@ -17,11 +17,21 @@ import plot_fakerate
 
 ROOT.gROOT.SetBatch(True) # no flashing canvases
 
+SAVEFORMATS  = "png" #pdf,png,C"
+SAVEDIR      = None
+
 from argparse import ArgumentParser
 parser = ArgumentParser()
 
 parser.add_argument("--era", dest="era", default="2016APV",
                     help="When making the plots, read the files with this era(years), default: 2016APV")
+
+parser.add_argument("-s", "--saveFormats", dest="saveFormats", default = SAVEFORMATS,
+                      help="Save formats for all plots [default: %s]" % SAVEFORMATS)
+
+parser.add_argument("--saveDir", dest="saveDir", default=SAVEDIR, 
+                      help="Directory where all pltos will be saved [default: %s]" % SAVEDIR)
+
 opts = parser.parse_args()
 
 TTC_header_path = os.path.join("TTC.h")
