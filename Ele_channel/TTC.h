@@ -74,17 +74,17 @@ float MC_eff_lumi_2016postAPV(float l1_pt){
 }
 
 float MC_eff_lumi_2017(float l1_pt){
-	float lumi=1.;
-	if(l1_pt<30) lumi=27.51;
-	else lumi=43.24;
-	return lumi;
+  float lumi=1.;
+  if(l1_pt<30) lumi=27.51;
+  else lumi=43.24;
+  return lumi;
 }
 
 float MC_eff_lumi_2018(float l1_pt){
-	float lumi=1.;
-	if(l1_pt<30) lumi=38.91;
-	else lumi=38.96;
-	return lumi;
+  float lumi=1.;
+  if(l1_pt<30) lumi=38.91;
+  else lumi=38.96;
+  return lumi;
 }
 int reco_eleid(int ntight, int tight_id, int fakeable_id)
 {
