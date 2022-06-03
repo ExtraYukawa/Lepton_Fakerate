@@ -1,10 +1,38 @@
+#==============
+# Last used:
+# python ele_fr.py --era 2016APV --saveDir Ele_config1
+# python ele_fr.py --era 2016postAPV --saveDir Ele_config1
+# python ele_fr.py --era 2017 --saveDir Ele_config1
+# python ele_fr.py --era 2018 --saveDir Ele_config1
+#==============
+
 import ROOT
 import time
 import os
+import sys
 import math
 from array import array
 from math import sqrt
 import plot_fakerate
+
+ROOT.gROOT.SetBatch(True) # no flashing canvases
+
+SAVEFORMATS  = "png" #pdf,png,C"
+SAVEDIR      = None
+
+from argparse import ArgumentParser
+parser = ArgumentParser()
+
+parser.add_argument("--era", dest="era", default="2016APV",
+                    help="When making the plots, read the files with this era(years), default: 2016APV")
+
+parser.add_argument("-s", "--saveFormats", dest="saveFormats", default = SAVEFORMATS,
+                      help="Save formats for all plots [default: %s]" % SAVEFORMATS)
+
+parser.add_argument("--saveDir", dest="saveDir", default=SAVEDIR, 
+                      help="Directory where all pltos will be saved [default: %s]" % SAVEDIR)
+
+opts = parser.parse_args()
 
 TTC_header_path = os.path.join("TTC.h")
 ROOT.gInterpreter.Declare('#include "{}"'.format(TTC_header_path))
@@ -38,17 +66,82 @@ def get_mcEventnumber(filename):
   return nevent_temp
 
 def trigger(df):
-  all_trigger = df.Filter("(HLT_Ele17_CaloIdM_TrackIdM_PFJet30 && l1_pt<35) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt>35)")
+  if opts.era == "2017":
+    all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_conept< 30) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_conept > 30)")
+  else:
+    all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt< 30) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt > 30)")
   return all_trigger
 
-path='/eos/user/m/melu/TTC_fakerate_newLepID_1129/'
+
+def histos_book(opts, flist, filters, h2_model, isData = "False"):
+  df_xyz_tree = ROOT.RDataFrame("Events",flist)
+  df_xyz_tree = df_xyz_tree.Define("abs_l1eta","abs(l1_eta)")
+  
+  if not isData:
+    if opts.era == "2017":
+      df_xyz_tree = df_xyz_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_conept)")
+    else:
+      df_xyz_tree = df_xyz_tree.Define("eff_lumi","MC_eff_lumi_"+opts.era+"(l1_pt)")
+    if opts.era == "2018":
+      df_xyz_tree = df_xyz_tree.Define("genweight","puWeight*eff_lumi*genWeight/abs(genWeight)") 
+    else:
+      df_xyz_tree = df_xyz_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)") 
+
+  # common for data/MC
+  df_xyz = df_xyz_tree.Filter(filters)
+  df_xyz_trigger = trigger(df_xyz)
+  if not isData:
+    df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_pt",'genweight')
+  else:
+    if opts.era == "2017":
+      df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_conept")
+    else:
+      df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_pt")
+
+  df_xyz_histos = []
+  h = df_xyz_histo.GetValue()
+  df_xyz_histos.append(h.Clone())
+  ROOT.TH1.AddDirectory(0)
+  
+  return df_xyz_histos
+
+
+# Select the corret path for different year
+
+if opts.era == "2016APV":
+  path='/eos/cms/store/group/phys_top/ExtraYukawa/Fakerate_dataset/2016apv/'
+elif opts.era == "2016postAPV":
+  path='/eos/cms/store/group/phys_top/ExtraYukawa/Fakerate_dataset/2016/'
+elif opts.era == "2017":
+  path='/eos/cms/store/group/phys_top/ExtraYukawa/Fakerate_dataset/2017/'
+elif opts.era == "2018":
+  path='/eos/cms/store/group/phys_top/ExtraYukawa/Fakerate_dataset/2018/'
+else:
+  raise Exception ("select correct era!")
+
 
 singleEG_names = ROOT.std.vector('string')()
-for f in ["SingleEGC.root","SingleEGD.root","SingleEGE.root","SingleEGF.root"]:
-  singleEG_names.push_back(path+f)
+if opts.era == "2016APV":
+  print ("Reading 2016 APV files \n")
+  for f in ["DoubleEG_B2.root","DoubleEG_C.root","DoubleEG_D.root", "DoubleEG_E.root", "DoubleEG_F.root"]:
+    singleEG_names.push_back(path+f) #NOTE for 2016 we have DoubleEG
+elif opts.era == "2016postAPV":
+  print ("Reading 2016 postAPV files \n")
+  for f in ["DoubleEGF.root", "DoubleEGG.root", "DoubleEGH.root"]:
+    singleEG_names.push_back(path+f) #NOTE for 2016 we have DoubleEG
+elif opts.era == "2017":
+  print ("Reading 2017 files \n")
+  for f in ["SingleEGC.root","SingleEGD.root","SingleEGE.root","SingleEGF.root"]:
+    singleEG_names.push_back(path+f)
+elif opts.era == "2018":
+  print ("Reading 2018 files \n")
+  for f in ["EGammaA.root","EGammaB.root","EGammaC.root","EGammaD.root"]:
+    singleEG_names.push_back(path+f)
+else:
+  raise Exception ("select correct era!")
 
 DY_list = ROOT.std.vector('string')()
-for f in ['DY.root']:
+for f in ['DYnlo.root']: #keep in mind for DYnlo.root
   DY_list.push_back(path+f)
 
 WJet_list = ROOT.std.vector('string')()
@@ -63,7 +156,7 @@ TTTo2L_list = ROOT.std.vector('string')()
 for f in ['TTTo2L.root']:
   TTTo2L_list.push_back(path+f)
 
-def Fakerate_Analysis():
+def Fakerate_Analysis(opts):
 
   histos_deno = []
   histos_nume = []
@@ -93,82 +186,29 @@ def Fakerate_Analysis():
   h2_deno_model=ROOT.RDF.TH2DModel(h2_deno)
   h2_nume_model=ROOT.RDF.TH2DModel(h2_nume)
 
-  df_SingleEG_deno_tree = ROOT.RDataFrame("Events", singleEG_names)
-  df_SingleEG_deno_tree = df_SingleEG_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_SingleEG_deno = df_SingleEG_deno_tree.Filter(filters_denominator)
-  df_SingleEG_deno_trigger = trigger(df_SingleEG_deno)
-  df_SingleEG_deno_histo = df_SingleEG_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt")
 
-  df_SingleEG_nume_tree = ROOT.RDataFrame("Events", singleEG_names)
-  df_SingleEG_nume_tree = df_SingleEG_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_SingleEG_nume = df_SingleEG_nume_tree.Filter(filters_numerator)
-  df_SingleEG_nume_trigger = trigger(df_SingleEG_nume)
-  df_SingleEG_nume_histo = df_SingleEG_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt")
+  SingleEG_deno_histo = histos_book(opts, singleEG_names, filters_denominator, h2_deno_model, True) #fixme def histos_book(opts, flist, filters, h2_model, isData = "False"):
+  SingleEG_nume_histo = histos_book(opts, singleEG_names, filters_numerator, h2_nume_model, True)
+  print ("SingleEG_deno_histo definition complete")
+  # print "integral", SingleEG_deno_histo[0].Integral()
+  # sys.exit(1)
+  
+  DY_deno_histo = histos_book(opts, DY_list, filters_denominator, h2_deno_model, False)
+  DY_nume_histo = histos_book(opts, DY_list, filters_numerator, h2_nume_model, False)
+  print ("DY definition complete!")
+  
+  WJet_deno_histo = histos_book(opts, WJet_list, filters_denominator, h2_deno_model, False)
+  WJet_nume_histo = histos_book(opts, WJet_list, filters_numerator, h2_nume_model, False)
+  print ("WJet definition complete!")
+  
+  TTTo1L_deno_histo = histos_book(opts, TTTo1L_list, filters_denominator, h2_deno_model, False)
+  TTTo1L_nume_histo = histos_book(opts, TTTo1L_list, filters_numerator, h2_nume_model, False)
+  print ("TTTo1L definition complete!")
 
-  df_DY_deno_tree = ROOT.RDataFrame("Events",DY_list)
-  df_DY_deno_tree = df_DY_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_DY_deno_tree = df_DY_deno_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_DY_deno_tree = df_DY_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_DY_deno = df_DY_deno_tree.Filter(filters_denominator)
-  df_DY_deno_trigger = trigger(df_DY_deno)
-  df_DY_deno_histo = df_DY_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_DY_nume_tree = ROOT.RDataFrame("Events",DY_list)
-  df_DY_nume_tree = df_DY_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_DY_nume_tree = df_DY_nume_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_DY_nume_tree = df_DY_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_DY_nume = df_DY_nume_tree.Filter(filters_numerator)
-  df_DY_nume_trigger = trigger(df_DY_nume)
-  df_DY_nume_histo = df_DY_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_WJet_deno_tree = ROOT.RDataFrame("Events",WJet_list)
-  df_WJet_deno_tree = df_WJet_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_WJet_deno_tree = df_WJet_deno_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_WJet_deno_tree = df_WJet_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_WJet_deno = df_WJet_deno_tree.Filter(filters_denominator)
-  df_WJet_deno_trigger = trigger(df_WJet_deno)
-  df_WJet_deno_histo = df_WJet_deno_trigger.Histo2D(h2_deno_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_WJet_nume_tree = ROOT.RDataFrame("Events",WJet_list)
-  df_WJet_nume_tree = df_WJet_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_WJet_nume_tree = df_WJet_nume_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_WJet_nume_tree = df_WJet_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_WJet_nume = df_WJet_nume_tree.Filter(filters_numerator)
-  df_WJet_nume_trigger = trigger(df_WJet_nume)
-  df_WJet_nume_histo = df_WJet_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_TTTo1L_deno_tree = ROOT.RDataFrame("Events",TTTo1L_list)
-  df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_TTTo1L_deno_tree = df_TTTo1L_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_TTTo1L_deno = df_TTTo1L_deno_tree.Filter(filters_denominator)
-  df_TTTo1L_deno_trigger = trigger(df_TTTo1L_deno)
-  df_TTTo1L_deno_histo = df_TTTo1L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_TTTo1L_nume_tree = ROOT.RDataFrame("Events",TTTo1L_list)
-  df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_TTTo1L_nume_tree = df_TTTo1L_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_TTTo1L_nume = df_TTTo1L_nume_tree.Filter(filters_numerator)
-  df_TTTo1L_nume_trigger = trigger(df_TTTo1L_nume)
-  df_TTTo1L_nume_histo = df_TTTo1L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_TTTo2L_deno_tree = ROOT.RDataFrame("Events",TTTo2L_list)
-  df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_TTTo2L_deno_tree = df_TTTo2L_deno_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_TTTo2L_deno = df_TTTo2L_deno_tree.Filter(filters_denominator)
-  df_TTTo2L_deno_trigger = trigger(df_TTTo2L_deno)
-  df_TTTo2L_deno_histo = df_TTTo2L_deno_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
-
-  df_TTTo2L_nume_tree = ROOT.RDataFrame("Events",TTTo2L_list)
-  df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("abs_l1eta","abs(l1_eta)")
-  df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("eff_lumi","MC_eff_lumi(l1_pt)")
-  df_TTTo2L_nume_tree = df_TTTo2L_nume_tree.Define("genweight","puWeight*eff_lumi*PrefireWeight*genWeight/abs(genWeight)")
-  df_TTTo2L_nume = df_TTTo2L_nume_tree.Filter(filters_numerator)
-  df_TTTo2L_nume_trigger = trigger(df_TTTo2L_nume)
-  df_TTTo2L_nume_histo = df_TTTo2L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
-
+  TTTo2L_deno_histo = histos_book(opts, TTTo2L_list, filters_denominator, h2_deno_model, False)
+  TTTo2L_nume_histo = histos_book(opts, TTTo2L_list, filters_numerator, h2_nume_model, False)
+  print ("TTTo2L definition complete!")
+  
 #  df_tsch_tree = ROOT.RDataFrame("Events",tsch_list)
 #  df_tsch_tree = df_tsch_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
 #  df_tsch_tree = df_tsch_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
@@ -260,31 +300,19 @@ def Fakerate_Analysis():
 #    df_TTTo1L_histos.append(df_TTTo1L_histo)
 
 
-  df_SingleEG_deno_histo.Draw()
-  df_SingleEG_nume_histo.Draw()
-  df_DY_deno_histo.Draw()
-  df_DY_nume_histo.Draw()
-  df_WJet_deno_histo.Draw()
-  df_WJet_nume_histo.Draw()
-  df_TTTo1L_deno_histo.Draw()
-  df_TTTo1L_nume_histo.Draw()
-  df_TTTo2L_deno_histo.Draw()
-  df_TTTo2L_nume_histo.Draw()
-
-
 # ROOT version 6.14 don;t have function "ROOT.RDF.RunGraphs"
 #  ROOT.RDF.RunGraphs({df_ZZG_histo, df_ZZ_histo, df_ggZZ_4e_histo,df_ggZZ_4mu_histo, df_ggZZ_4tau_histo, df_ggZZ_2e2mu_histo,df_ggZZ_2e2tau_histo, df_ggZZ_2mu2tau_histo, df_TTZ_histo,df_TTG_histo, df_WWZ_histo, df_WZG_histo,df_WZZ_histo, df_ZZZ_histo, df_WZTo3L_histo,df_WZTo2L_histo, df_ZG_histo})
 
-  h_SingleEG_deno=df_SingleEG_deno_histo.GetValue()
-  h_SingleEG_nume=df_SingleEG_nume_histo.GetValue()
-  h_DY_deno=df_DY_deno_histo.GetValue()
-  h_DY_nume=df_DY_nume_histo.GetValue()
-  h_WJet_deno=df_WJet_deno_histo.GetValue()
-  h_WJet_nume=df_WJet_nume_histo.GetValue()
-  h_TTTo1L_deno=df_TTTo1L_deno_histo.GetValue()
-  h_TTTo1L_nume=df_TTTo1L_nume_histo.GetValue()
-  h_TTTo2L_deno=df_TTTo2L_deno_histo.GetValue()
-  h_TTTo2L_nume=df_TTTo2L_nume_histo.GetValue()
+  h_SingleEG_deno=SingleEG_deno_histo[0].Clone()
+  h_SingleEG_nume=SingleEG_nume_histo[0].Clone()
+  h_DY_deno=DY_deno_histo[0].Clone()
+  h_DY_nume=DY_nume_histo[0].Clone()
+  h_WJet_deno=WJet_deno_histo[0].Clone()
+  h_WJet_nume=WJet_nume_histo[0].Clone()
+  h_TTTo1L_deno=TTTo1L_deno_histo[0].Clone()
+  h_TTTo1L_nume=TTTo1L_nume_histo[0].Clone()
+  h_TTTo2L_deno=TTTo2L_deno_histo[0].Clone()
+  h_TTTo2L_nume=TTTo2L_nume_histo[0].Clone()
 
   h_DY_deno.Scale(-1.*DY_xs/DY_ev)
   h_DY_nume.Scale(-1.*DY_xs/DY_ev)
@@ -312,14 +340,16 @@ def Fakerate_Analysis():
     histos_deno[i]=overunder_flowbin(histos_deno[i])
     histos_nume[i]=overunder_flowbin(histos_nume[i])
 
-  c1 = plot_fakerate.draw_plots(histos_nume, histos_deno, 1)
+  c1 = plot_fakerate.draw_plots(opts, histos_nume, histos_deno, 1)
   del histos_deno[:]
   del histos_nume[:]
  
 if __name__ == "__main__":
   start = time.time()
   start1 = time.clock() 
-  Fakerate_Analysis()
+
+  Fakerate_Analysis(opts)
+
   end = time.time()
   end1 = time.clock()
   print "wall time:", end-start
