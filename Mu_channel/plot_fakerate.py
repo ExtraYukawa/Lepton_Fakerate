@@ -2,7 +2,8 @@ import ROOT
 import numpy as np
 from ROOT import kFALSE
 import datetime
-import os
+import os, sys
+sys.path.append('../python')
 
 import CMSTDRStyle
 CMSTDRStyle.setTDRStyle().cd()
@@ -53,7 +54,7 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
           
         # save all output inside a directory
         if opts.saveDir == None:
-                opts.saveDir = datetime.datetime.now().strftime("%d%b%YT%H%M")
+                opts.saveDir = '%s_%s_%s' % ("Mu_FR", opts.era, datetime.datetime.now().strftime("%d%b%YT%H%M"))
 
         if not os.path.exists(opts.saveDir):
                 print ("save direcotry does not exits! so creating", opts.saveDir)
