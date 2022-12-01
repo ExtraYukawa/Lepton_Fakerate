@@ -58,7 +58,7 @@ def draw_plots(opts, hist_nume =[], hist_deno =[], data=1):
 
         # save all output inside a directory
         if opts.saveDir == None:
-                args.saveDir = '%s_%s_%s' % ("Ele_FR", args.era, datetime.datetime.now().strftime("%d%b%YT%H%M"))
+                opts.saveDir = '%s_%s_%s' % ("Ele_FR", opts.era, datetime.datetime.now().strftime("%d%b%YT%H%M"))
 
         if not os.path.exists(opts.saveDir):
                 print ("save direcotry does not exits! so creating", opts.saveDir)
