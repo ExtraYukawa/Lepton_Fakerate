@@ -8,6 +8,7 @@
 
 using namespace ROOT::VecOps;
 using rvec_f = const RVec<float> &;
+using rvec_i = const RVec<int> &;
 
 TFile*f=TFile::Open("TriggerSF_2017UL.root");
 TH2D*h1_ee=(TH2D*)f->Get("h2D_SF_ee_lep1pteta");
@@ -90,4 +91,17 @@ int reco_eleid(int ntight, int tight_id, int fakeable_id)
 {
         if(ntight==1) return tight_id;
         else return fakeable_id;
+}
+
+RVec<size_t> GoodJets(rvec_i jetId, rvec_f eta, rvec_f pt, rvec_i puId){
+  RVec<int> idx;
+  for (size_t i = 0; i < pt.size(); i++) {
+    if (jetId[i] >= 2 && abs(eta[i]) < 4.7 && pt[i] > 30. && (pt[i] > 50. || (pt[i] <= 50. && puId[i] >= 7))) idx.emplace_back(i);
+  }
+  return idx;
+}
+
+bool atleast1GoodJets(rvec_i GoodJets_idx){
+  if (GoodJets_idx.size() >= 1) return true;
+  else return false;
 }
