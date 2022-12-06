@@ -328,96 +328,6 @@ def Fakerate_Analysis(opts):
   else:
     df_TTTo2L_nume_histo = df_TTTo2L_nume_trigger.Histo2D(h2_nume_model,"abs_l1eta","l1_pt",'genweight')
 
-#  df_tsch_tree = ROOT.RDataFrame("Events",tsch_list)
-#  df_tsch_tree = df_tsch_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_tsch_tree = df_tsch_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_tsch = df_tsch_tree.Filter(filters)
-#  df_tsch_trigger = all_trigger(df_tsch)
-#  df_tsch_histos=[]
-#  for i in hists_name:
-#    df_tsch_histo = df_tsch_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_tsch_histos.append(df_tsch_histo)
-#
-#  df_t_tch_tree = ROOT.RDataFrame("Events",t_tch_list)
-#  df_t_tch_tree = df_t_tch_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_t_tch_tree = df_t_tch_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_t_tch = df_t_tch_tree.Filter(filters)
-#  df_t_tch_trigger = all_trigger(df_t_tch)
-#  df_t_tch_histos=[]
-#  for i in hists_name:
-#    df_t_tch_histo = df_t_tch_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_t_tch_histos.append(df_t_tch_histo)
-#
-#  df_tbar_tch_tree = ROOT.RDataFrame("Events",tbar_tch_list)
-#  df_tbar_tch_tree = df_tbar_tch_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_tbar_tch_tree = df_tbar_tch_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_tbar_tch = df_tbar_tch_tree.Filter(filters)
-#  df_tbar_tch_trigger = all_trigger(df_tbar_tch)
-#  df_tbar_tch_histos=[]
-#  for i in hists_name:
-#    df_tbar_tch_histo = df_tbar_tch_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_tbar_tch_histos.append(df_tbar_tch_histo)
-#
-#  df_tW_tree = ROOT.RDataFrame("Events",tW_list)
-#  df_tW_tree = df_tW_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_tW_tree = df_tW_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_tW = df_tW_tree.Filter(filters)
-#  df_tW_trigger = all_trigger(df_tW)
-#  df_tW_histos=[]
-#  for i in hists_name:
-#    df_tW_histo = df_tW_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_tW_histos.append(df_tW_histo)
-#
-#  df_tbarW_tree = ROOT.RDataFrame("Events",tbarW_list)
-#  df_tbarW_tree = df_tbarW_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_tbarW_tree = df_tbarW_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_tbarW = df_tbarW_tree.Filter(filters)
-#  df_tbarW_trigger = all_trigger(df_tbarW)
-#  df_tbarW_histos=[]
-#  for i in hists_name:
-#    df_tbarW_histo = df_tbarW_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_tbarW_histos.append(df_tbarW_histo)
-#
-#  df_ttWtoLNu_tree = ROOT.RDataFrame("Events",ttWtoLNu_list)
-#  df_ttWtoLNu_tree = df_ttWtoLNu_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_ttWtoLNu_tree = df_ttWtoLNu_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_ttWtoLNu = df_ttWtoLNu_tree.Filter(filters)
-#  df_ttWtoLNu_trigger = all_trigger(df_ttWtoLNu)
-#  df_ttWtoLNu_histos=[]
-#  for i in hists_name:
-#    df_ttWtoLNu_histo = df_ttWtoLNu_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_ttWtoLNu_histos.append(df_ttWtoLNu_histo)
-#
-#  df_ttWtoQQ_tree = ROOT.RDataFrame("Events",ttWtoQQ_list)
-#  df_ttWtoQQ_tree = df_ttWtoQQ_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_ttWtoQQ_tree = df_ttWtoQQ_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_ttWtoQQ = df_ttWtoQQ_tree.Filter(filters)
-#  df_ttWtoQQ_trigger = all_trigger(df_ttWtoQQ)
-#  df_ttWtoQQ_histos=[]
-#  for i in hists_name:
-#    df_ttWtoQQ_histo = df_ttWtoQQ_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_ttWtoQQ_histos.append(df_ttWtoQQ_histo)
-#
-#  df_TTTo2L_tree = ROOT.RDataFrame("Events",TTTo2L_list)
-#  df_TTTo2L_tree = df_TTTo2L_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_TTTo2L_tree = df_TTTo2L_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_TTTo2L = df_TTTo2L_tree.Filter(filters)
-#  df_TTTo2L_trigger = all_trigger(df_TTTo2L)
-#  df_TTTo2L_histos=[]
-#  for i in hists_name:
-#    df_TTTo2L_histo = df_TTTo2L_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_TTTo2L_histos.append(df_TTTo2L_histo)
-#
-#  df_TTTo1L_tree = ROOT.RDataFrame("Events",TTTo1L_list)
-#  df_TTTo1L_tree = df_TTTo1L_tree.Define("trigger_SF","trigger_sf_ee(ttc_l1_pt,ttc_l2_pt,ttc_l1_eta,ttc_l2_eta)")
-#  df_TTTo1L_tree = df_TTTo1L_tree.Define("genweight","puWeight*PrefireWeight*Electron_RECO_SF[ttc_l1_id]*Electron_RECO_SF[ttc_l2_id]*Electron_CutBased_TightID_SF[ttc_l1_id]*Electron_CutBased_TightID_SF[ttc_l2_id]*trigger_SF*genWeight/abs(genWeight)")
-#  df_TTTo1L = df_TTTo1L_tree.Filter(filters)
-#  df_TTTo1L_trigger = all_trigger(df_TTTo1L)
-#  df_TTTo1L_histos=[]
-#  for i in hists_name:
-#    df_TTTo1L_histo = df_TTTo1L_trigger.Histo1D((i,'',histos_bins[i],histos_bins_low[i],histos_bins_high[i]), i,'genweight')
-#    df_TTTo1L_histos.append(df_TTTo1L_histo)
-
 
   df_DoubleMu_deno_histo.Draw()
   df_DoubleMu_nume_histo.Draw()
@@ -431,8 +341,8 @@ def Fakerate_Analysis(opts):
   df_TTTo2L_nume_histo.Draw()
 
 
-# ROOT version 6.14 don;t have function "ROOT.RDF.RunGraphs"
-#  ROOT.RDF.RunGraphs({df_ZZG_histo, df_ZZ_histo, df_ggZZ_4e_histo,df_ggZZ_4mu_histo, df_ggZZ_4tau_histo, df_ggZZ_2e2mu_histo,df_ggZZ_2e2tau_histo, df_ggZZ_2mu2tau_histo, df_TTZ_histo,df_TTG_histo, df_WWZ_histo, df_WZG_histo,df_WZZ_histo, df_ZZZ_histo, df_WZTo3L_histo,df_WZTo2L_histo, df_ZG_histo})
+  # ROOT version 6.14 don;t have function "ROOT.RDF.RunGraphs"
+  #  ROOT.RDF.RunGraphs({df_ZZG_histo, df_ZZ_histo, df_ggZZ_4e_histo,df_ggZZ_4mu_histo, df_ggZZ_4tau_histo, df_ggZZ_2e2mu_histo,df_ggZZ_2e2tau_histo, df_ggZZ_2mu2tau_histo, df_TTZ_histo,df_TTG_histo, df_WWZ_histo, df_WZG_histo,df_WZZ_histo, df_ZZZ_histo, df_WZTo3L_histo,df_WZTo2L_histo, df_ZG_histo})
 
   h_DoubleMu_deno=df_DoubleMu_deno_histo.GetValue()
   h_DoubleMu_nume=df_DoubleMu_nume_histo.GetValue()
@@ -467,7 +377,7 @@ def Fakerate_Analysis(opts):
   histos_nume.append(h_TTTo2L_nume.Clone())
 
   for i in range(0,5):
-#  for i in range(0,1):
+    #  for i in range(0,1):
     histos_deno[i]=overunder_flowbin(histos_deno[i])
     histos_nume[i]=overunder_flowbin(histos_nume[i])
 
