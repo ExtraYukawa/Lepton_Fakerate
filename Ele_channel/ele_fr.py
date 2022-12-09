@@ -72,9 +72,19 @@ def trigger(df):
     all_trigger = df.Filter("(HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt< 30) || (HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30 && l1_pt > 30)")
   return all_trigger
 
+def puJetIDApply(Inputdf, ApplypuJetID = "False"):
+  df_atleast1Jets = Inputdf.Filter("nJet>0", "At least one jet")
+  df_GoodJets = df_atleast1Jets.Define("GoodJets_idx", "GoodJets(Jet_jetId, Jet_eta, Jet_pt, Jet_puId)")
+  df_atleast1GoodJets = df_GoodJets.Filter("atleast1GoodJets(GoodJets_idx)", "At least one good jet")
+  if ApplypuJetID:
+    return df_atleast1GoodJets
+  else:
+    return Inputdf
+
 
 def histos_book(opts, flist, filters, h2_model, isData = "False"):
-  df_xyz_tree = ROOT.RDataFrame("Events",flist)
+  df_xyz_tree_org = ROOT.RDataFrame("Events",flist)
+  df_xyz_tree = puJetIDApply(df_xyz_tree_org, False) #PUjetID
   df_xyz_tree = df_xyz_tree.Define("abs_l1eta","abs(l1_eta)")
   
   if not isData:
@@ -91,7 +101,10 @@ def histos_book(opts, flist, filters, h2_model, isData = "False"):
   df_xyz = df_xyz_tree.Filter(filters)
   df_xyz_trigger = trigger(df_xyz)
   if not isData:
-    df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_pt",'genweight')
+    if opts.era == "2017":
+      df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_conept",'genweight')
+    else:
+      df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_pt",'genweight')
   else:
     if opts.era == "2017":
       df_xyz_histo = df_xyz_trigger.Histo2D(h2_model,"abs_l1eta","l1_conept")
