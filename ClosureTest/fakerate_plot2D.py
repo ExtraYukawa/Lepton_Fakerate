@@ -93,10 +93,8 @@ def analysis(era, channel,norm):
                    .Define("fakeweight_mu_statUp",str(fakeweight_mu_statUp_definition))\
                    .Define("fakeweight_mu_statDo",str(fakeweight_mu_statDo_definition))\
                    .Define("genweight",'puWeight*genWeight/abs(genWeight)')\
-                   .Define("l2_conePt",'muon_conePt[ttc_l2_id]')\
                    .Define('fake_id', 'fake_index(ttc_1P1F,ttc_lep1_faketag,ttc_l1_id,ttc_l2_id)')\
                    .Define('ptratio', 'muon_jet_Ptratio[fake_id]')\
-                   .Define('mediumID',  'MediumID(Muon_mediumId, fake_id)')\
                    .Define('genPartFlav','Muon_genPartFlav[fake_id]')\
                    .Define('fake_conePt'    , 'muon_conePt[fake_id]')\
                    .Define('fake_iso', 'Muon_miniPFRelIso_all[fake_id]')\

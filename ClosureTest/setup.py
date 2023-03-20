@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import os
 
+os.system("cp ../python/CMS* .")
 os.system("mkdir -p data")
 os.chdir("data")
 
