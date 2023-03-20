@@ -211,7 +211,7 @@ def draw_plots(hist_array =[], draw_data=0, x_name='', isem=0, h_fakerate_syst='
 	
 	set_axis(h_stack,'y', 'Event/Bin', False)
 
-	CMSstyle.SetStyle(pad1,era)
+	CMSstyle.SetStyle(pad1,era.replace('apv','APV'))
 
 	##legend
 	leg1 = ROOT.TLegend(0.66, 0.75, 0.94, 0.88)

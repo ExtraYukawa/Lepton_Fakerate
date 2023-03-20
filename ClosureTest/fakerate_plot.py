@@ -15,6 +15,8 @@ def analysis(era, channel):
 ###################
 
   os.system('cat %s | sed "s/EraToBeReplaced/%s/g" > %s'%('script/slim_fake.h',era,'script/slim_fake_%s.h'%era))
+  os.system('mkdir -p plot/%s'%era)
+
 
   ROOT.gSystem.Load("libGenVector.so")
   TTC_header_path = os.path.join("script/slim_fake_" + era + ".h")
@@ -188,7 +190,7 @@ if __name__ == "__main__":
   parser.add_option('-c','--channel',dest='channel',default='mm',type='string')
   (args,opt) = parser.parse_args()
 
-#  analysis(args.era, args.channel)
-  for ERA in ['2016postapv']:#,'2016postapv','2017','2018']:
-    for CHANNEL in ['ee','em','mm']:
-      analysis(ERA,CHANNEL)
+  analysis(args.era, args.channel)
+#  for ERA in ['2016postapv']:#,'2016postapv','2017','2018']:
+#    for CHANNEL in ['ee','em','mm']:
+#      analysis(ERA,CHANNEL)
