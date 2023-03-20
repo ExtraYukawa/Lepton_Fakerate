@@ -215,7 +215,7 @@ if __name__ == "__main__":
   parser.add_argument("--norm", action="store_true")
   args = parser.parse_args()
 
-#  analysis(args.era, args.channel,args.norm)
-  for ERA in ['2016postapv']:#,'2016postapv','2017','2018']:
-    for CHANNEL in ['ee','em','mm']:
-      analysis(ERA,CHANNEL,False)
+  analysis(args.era, args.channel,args.norm)
+#  for ERA in ['2016postapv']:#,'2016postapv','2017','2018']:
+#    for CHANNEL in ['ee','em','mm']:
+#      analysis(ERA,CHANNEL,False)
