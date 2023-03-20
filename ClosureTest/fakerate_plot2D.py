@@ -17,6 +17,7 @@ def analysis(era, channel,norm):
 ###################
 
   os.system('cat %s | sed "s/EraToBeReplaced/%s/g" > %s'%('script/slim_fake.h',era,'script/slim_fake_%s.h'%era))
+  os.system('mkdir -p plot/%s'%era)
 
   ROOT.gSystem.Load("libGenVector.so")
   TTC_header_path = os.path.join("script/slim_fake_" + era + ".h")

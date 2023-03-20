@@ -52,7 +52,7 @@ def FindProcess(era, fin_name):
 
   subprocess = fin_name.replace('.root','')
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/sample_' + str(era) + 'UL.json'))
+  jsonfile = open(os.path.join('data/sample_' + str(era) + 'UL.json'))
   samples  = json.load(jsonfile, encoding='utf-8', object_pairs_hook=OrderedDict).items()
   jsonfile.close()
   process = None
@@ -64,7 +64,7 @@ def FindProcess(era, fin_name):
   return process
 
 def GetTrainingFile(era, isTrain): # -1: drop, 0: used not for training, 1: used for training
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/sample_' + str(era) + 'UL.json'))
+  jsonfile = open(os.path.join('data/sample_' + str(era) + 'UL.json'))
   samples  = json.load(jsonfile, encoding='utf-8', object_pairs_hook=OrderedDict).items()
   jsonfile.close()
   TrainingFile_List = []
@@ -91,11 +91,11 @@ def GetDataFile(era, channel):
 
 def GetTrigger_MC(era):
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/DiLeptonTriggers_%s.json'%era))
+  jsonfile = open(os.path.join('data/DiLeptonTriggers_%s.json'%era))
   trig_list = json.load(jsonfile, encoding='utf-8')
   jsonfile.close()
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/Trigger_command_%s.json'%era))
+  jsonfile = open(os.path.join('data/Trigger_command_%s.json'%era))
   trig_command_list = json.load(jsonfile, encoding='utf-8',object_pairs_hook=OrderedDict)
   jsonfile.close()
 
@@ -109,11 +109,11 @@ def GetTrigger_MC(era):
 
 def GetTrigger_Data(era, fin_name, channel):
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/DiLeptonTriggers_%s.json'%era))
+  jsonfile = open(os.path.join('data/DiLeptonTriggers_%s.json'%era))
   run_dict = json.load(jsonfile, encoding='utf-8')
   jsonfile.close()
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/Trigger_command_%s.json'%era))
+  jsonfile = open(os.path.join('data/Trigger_command_%s.json'%era))
   trig_command_list = json.load(jsonfile, encoding='utf-8',object_pairs_hook=OrderedDict)
   jsonfile.close()
 
@@ -164,7 +164,7 @@ def GetTrigger_Data(era, fin_name, channel):
 
 def GetMETFilter_MC(era, fin_name):
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/%s_MET_Filters.json'%era))
+  jsonfile = open(os.path.join('data/%s_MET_Filters.json'%era))
   MET_list = json.load(jsonfile, encoding='utf-8',object_pairs_hook=OrderedDict)
   jsonfile.close()
 
@@ -181,7 +181,7 @@ def GetMETFilter_MC(era, fin_name):
 
 def GetMETFilter_Data(era):
 
-  jsonfile = open(os.path.join(cmsswBase + '/src/FakeRateClosureTest/data/%s_MET_Filters.json'%era))
+  jsonfile = open(os.path.join('data/%s_MET_Filters.json'%era))
   MET_list = json.load(jsonfile, encoding='utf-8',object_pairs_hook=OrderedDict)
   jsonfile.close()
 

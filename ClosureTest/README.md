@@ -1,7 +1,5 @@
 ## Fake rate closure test
-To run on this project, you need to worked under CMSSW_11_X_X for certain function. (TODO: modify it to be constistent with the rest part of analysis)
-
-Then download the necessary files through,
+To set up the environment and download necessary files.
 ```
 python setup.py
 ```

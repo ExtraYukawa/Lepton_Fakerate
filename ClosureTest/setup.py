@@ -4,6 +4,8 @@ import os
 
 os.system("cp ../python/CMS* .")
 os.system("mkdir -p data")
+os.system("mkdir -p plot")
+os.system("mkdir -p result")
 os.chdir("data")
 
 repo_url = "https://github.com/ExtraYukawa/Script_ForMVA/tree/main/data"
