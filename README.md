@@ -27,9 +27,9 @@ cd Lepton_Fakerate/Ele_channel
 python ele_fr.py --era 2016APV --saveDir Ele_config1
 ```
 
-# For producing closure plots 
+# For producing closure plots take a look on [ClosureTest](https://github.com/ExtraYukawa/Lepton_Fakerate/tree/main/ClosureTest)
 ```
-cd [ClosureTest](https://github.com/ExtraYukawa/Lepton_Fakerate/tree/main/ClosureTest)
+cd ClosureTest
 ```
 and Follow the readme inside that directory
 
