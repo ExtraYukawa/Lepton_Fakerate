@@ -10,6 +10,8 @@ from common import inputFile_path, GetTrigger_MC, GetMETFilter_MC, get_mcEventnu
 import plot_TTCregion
 import numpy as np
 
+ROOT.gROOT.SetBatch(True)
+
 def analysis(era, channel,norm):
 
 ###################
@@ -170,9 +172,9 @@ def analysis(era, channel,norm):
         diff       = abs(Nevt_mc - Nevt_fake)
         Bin_Stat   = sqrt(Nevt_fake)
         if Nevt_fake > 0:
-          intrinsic_syst = sqrt(max(diff**2 - (Bin_Stat/2.)**2 - (FR_Stat/2.)**2,0))/Nevt_fake + 0.0001
+          intrinsic_syst = sqrt(max(diff**2 - (Bin_Stat)**2 - (FR_Stat/2.)**2,0))/Nevt_fake + 0.0001
           h_intrinsic_syst.SetBinContent(i+1, j+1, intrinsic_syst)
-          h_FakeRate_syst.SetBinContent(i+1,  j+1, sqrt((FR_Stat/2.)**2 + (Bin_Stat/2.)**2)/Nevt_fake)
+          h_FakeRate_syst.SetBinContent(i+1,  j+1, sqrt((FR_Stat/2.)**2 + (Bin_Stat)**2)/Nevt_fake)
           unc      += intrinsic_syst * Nevt_fake
           unc_nbin += Nevt_fake
         else:

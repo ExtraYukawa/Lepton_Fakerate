@@ -8,6 +8,8 @@ import optparse
 from common import inputFile_path, GetTrigger_MC, GetMETFilter_MC, get_mcEventnumber, overunder_flowbin, get_hist
 import plot_TTCregion
 
+ROOT.gROOT.SetBatch(True)
+
 def analysis(era, channel):
 
 ###################
@@ -151,19 +153,17 @@ def analysis(era, channel):
       diff       = abs(Nevt_mc - Nevt_fake)
       Bin_Stat   = sqrt(Nevt_fake)
       if Nevt_fake > 0:
-        intrinsic_syst = sqrt(max(diff**2 - (Bin_Stat/2.)**2 - (FR_Stat/2.)**2,0))/Nevt_fake
-#      print(FR_eleStat, FR_muStat, FR_Stat, Nevt_mc, Nevt_fake, diff, Bin_Stat, intrinsic_syst)
+        intrinsic_syst = sqrt(max(diff**2 - (Bin_Stat)**2 - (FR_Stat/2.)**2,0))/Nevt_fake
         h_intrinsic_syst.SetBinContent(i+1, intrinsic_syst)
-        h_FakeRate_syst.SetBinContent(i+1, sqrt((FR_Stat/2.)**2 + (Bin_Stat/2.)**2)/Nevt_fake)
-        if intrinsic_syst > 0.:
-          unc      += intrinsic_syst
-          unc_nbin += 1.
+        h_FakeRate_syst.SetBinContent(i+1, sqrt((FR_Stat/2.)**2 + (Bin_Stat)**2)/Nevt_fake)
+        unc      += intrinsic_syst * Nevt_fake
+        unc_nbin += Nevt_fake
       else:
         h_intrinsic_syst.SetBinContent(i+1, Nevt_mc)
         h_FakeRate_syst.SetBinContent(i+1, 0)
 
     if unc_nbin>0:
-      unc = unc/unc_nbin
+      unc = unc/unc_nbin # Note this is only 1D unc. We will use more dedicated one in 2D for the final purpose --> See fakerate_plot2D.py
     else:
       unc = 0.0
     unc_dict[hist] = unc
