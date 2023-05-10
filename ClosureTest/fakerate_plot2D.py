@@ -10,6 +10,8 @@ from common import inputFile_path, GetTrigger_MC, GetMETFilter_MC, get_mcEventnu
 import plot_TTCregion
 import numpy as np
 
+ROOT.gROOT.SetBatch(True)
+
 def analysis(era, channel,norm):
 
 ###################

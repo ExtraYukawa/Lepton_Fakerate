@@ -8,6 +8,8 @@ import optparse
 from common import inputFile_path, GetTrigger_MC, GetMETFilter_MC, get_mcEventnumber, overunder_flowbin, get_hist
 import plot_TTCregion
 
+ROOT.gROOT.SetBatch(True)
+
 def analysis(era, channel):
 
 ###################
