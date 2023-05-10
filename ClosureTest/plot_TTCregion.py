@@ -41,15 +41,27 @@ def draw_plots(hist_array =[], draw_data=0, x_name='', isem=0, h_fakerate_syst='
 	fileout.Close()
 
         lumi = 0.
-        if(era == '2017'):
-          lumi = 41480.
-        elif(era == '2018'):
-          lumi = 59830.
-        elif(era == '2016postapv'):
-          lumi = 16810.
-        elif(era == '2016apv'):
-          lumi = 19520.
+        flat_unc = 0. # TODO: Now fill it by hand, need to be automatic at some point.
 
+        if(era == '2017'):
+
+          lumi = 41480.
+          flat_unc = 0.11
+
+        elif(era == '2018'):
+
+          lumi = 59830.
+          flat_unc = 0.10
+
+        elif(era == '2016postapv'):
+
+          lumi = 16810.
+          flat_unc = 0.15
+
+        elif(era == '2016apv'):
+
+          lumi = 19520.
+          flat_unc = 0.27
 
 	TT = hist_array[1].Clone()
 	TT.SetFillColor(ROOT.kBlue)
@@ -94,31 +106,50 @@ def draw_plots(hist_array =[], draw_data=0, x_name='', isem=0, h_fakerate_syst='
         y_pad2_intrinsic = [];
         y_pad2_intrinsic_error_u = [];
         y_pad2_intrinsic_error_d = [];
+        y_pad2_full = []
+        y_pad2_full_error_u = [];
+        y_pad2_full_error_d = [];
+    
 	for i in range(0,binsize):
+
 		x.append(h_error.GetBinCenter(i+1))
 		y.append(h_error.GetBinContent(i+1))
+
 		y_pad2.append(1.0)
                 y_pad2_intrinsic.append(1.0)
+                y_pad2_full.append(1.0)
+
 		xerror_l.append(0.5*h_error.GetBinWidth(i+1))
 		xerror_r.append(0.5*h_error.GetBinWidth(i+1))
+
 		yerror_u.append(h_error.GetBinErrorUp(i+1))
 		yerror_d.append(h_error.GetBinErrorLow(i+1))
+
 		if h_error.GetBinContent(i+1)<=0:
 		  y_pad2_error_u.append(0)
 		  y_pad2_error_d.append(0)
                   y_pad2_intrinsic_error_u.append(0)
                   y_pad2_intrinsic_error_d.append(0)
+                  y_pad2_full_error_u.append(0)
+                  y_pad2_full_error_d.append(0)
+
 		else:
-		  #y_pad2_error_u.append(h_error.GetBinErrorUp(i+1)/(h_error.GetBinContent(i+1)))
-		  #y_pad2_error_d.append(h_error.GetBinErrorLow(i+1)/(h_error.GetBinContent(i+1)))
 		  y_pad2_error_u.append(h_fakerate_syst.GetBinContent(i+1))
 		  y_pad2_error_d.append(h_fakerate_syst.GetBinContent(i+1))
+
                   y_pad2_intrinsic_error_u.append(h_intrinsic_syst.GetBinContent(i+1))
                   y_pad2_intrinsic_error_d.append(h_intrinsic_syst.GetBinContent(i+1))
+
+                  y_pad2_full_error_u.append((h_fakerate_syst.GetBinContent(i+1)**2 + flat_unc**2)**0.5)
+                  y_pad2_full_error_d.append((h_fakerate_syst.GetBinContent(i+1)**2 + flat_unc**2)**0.5)
+
+
 	gr = ROOT.TGraphAsymmErrors(len(x), np.array(x), np.array(y),np.array(xerror_l),np.array(xerror_r), np.array(yerror_d), np.array(yerror_u))
 	gr_pad2 = ROOT.TGraphAsymmErrors(len(x), np.array(x), np.array(y_pad2),np.array(xerror_l),np.array(xerror_r), np.array(y_pad2_error_d), np.array(y_pad2_error_u))
-
         gr_pad2_intrinsic = ROOT.TGraphAsymmErrors(len(x), np.array(x), np.array(y_pad2_intrinsic), np.array(xerror_l), np.array(xerror_r), np.array(y_pad2_intrinsic_error_d), np.array(y_pad2_intrinsic_error_u))
+        gr_pad2_full      = ROOT.TGraphAsymmErrors(len(x), np.array(x), np.array(y_pad2_full),      np.array(xerror_l), np.array(xerror_r), np.array(y_pad2_full_error_d), np.array(y_pad2_full_error_u))
+
+
 
 	TT_yield =round(TT.Integral(),1)
 	Data_yield = round(Data.Integral())
@@ -217,8 +248,6 @@ def draw_plots(hist_array =[], draw_data=0, x_name='', isem=0, h_fakerate_syst='
 	leg1 = ROOT.TLegend(0.66, 0.75, 0.94, 0.88)
         leg1.SetMargin(0.4)
 
-#        leg1.AddEntry(Data,'Data ['+str(Data_yield)+']','pe')
-#        leg1.AddEntry(TT,'TT ['+str(TT_yield)+']','f')
         leg1.AddEntry(Data,'Observed ['+str(Data_yield)+']','pe')
         leg1.AddEntry(TT,'Predicted ['+str(TT_yield)+']','f')
         leg1.AddEntry(gr,'Stat. unc','f')
@@ -243,41 +272,56 @@ def draw_plots(hist_array =[], draw_data=0, x_name='', isem=0, h_fakerate_syst='
         hData.SetMarkerColor(1)
         hData.SetLineWidth(1)
 
-	hData.GetYaxis().SetTitle("Data/Pred.")
+	hData.GetYaxis().SetTitle("Obs./Pred.")
 	hData.GetXaxis().SetTitle(h_stack.GetXaxis().GetTitle())
         hData.GetYaxis().CenterTitle()
 	hData.SetMaximum(2.0)
 	hData.SetMinimum(0.0)
         hData.GetYaxis().SetNdivisions(4,kFALSE)
-        hData.GetYaxis().SetTitleOffset(0.3)
-        hData.GetYaxis().SetTitleSize(0.13)
+        hData.GetYaxis().SetTitleOffset(0.4)
+        hData.GetYaxis().SetTitleSize(0.095)
         hData.GetYaxis().SetLabelSize(0.1)
-        hData.GetXaxis().SetTitleSize(0.14)
+        hData.GetXaxis().SetTitleOffset(1.1)
+        hData.GetXaxis().SetTitleSize(0.095)
         hData.GetXaxis().SetLabelSize(0.1)
 	hData.Draw()
 
         
-        leg2 = ROOT.TLegend(0.6, 0.82, 0.76, 0.95)
+        leg2 = ROOT.TLegend(0.15, 0.8, 0.4, 0.95)
         leg2.SetMargin(0.3)
-        leg3 = ROOT.TLegend(0.76, 0.82, 0.92, 0.95)
+
+        leg3 = ROOT.TLegend(0.4, 0.8, 0.55, 0.95)
         leg3.SetMargin(0.3)
+
+        leg4 = ROOT.TLegend(0.55, 0.8, 0.7, 0.95)
+        leg4.SetMargin(0.3)
 
 	gr_pad2.SetFillColor(1)
         gr_pad2.SetFillStyle(3005)
         gr_pad2.Draw("SAME 2")
 
         gr_pad2_intrinsic.SetFillColorAlpha(2,0.3)
-#        gr_pad2_intrinsic.SetFillStyle(3005)
         gr_pad2_intrinsic.Draw("SAME 2")
 
-        leg2.AddEntry(gr_pad2,'Stat \oplus Syst','f')
+        gr_pad2_full.SetFillColorAlpha(ROOT.kBlue,0.2)
+        gr_pad2_full.Draw("SAME 2")
+
+        leg2.AddEntry(gr_pad2,'bin stat #oplus shape','f')
+
+        leg2.SetFillColorAlpha(0,0)
+        leg3.SetFillColorAlpha(0,0)
+        leg4.SetFillColorAlpha(0,0)
+
         leg2.SetTextSize(0.06)
-#        leg2.SetFillStyle(0);
-        leg3.AddEntry(gr_pad2_intrinsic,'Res.','f')
         leg3.SetTextSize(0.06)
-#        leg3.SetFillStyle(0);
+        leg4.SetTextSize(0.06)
+        
+        leg3.AddEntry(gr_pad2_intrinsic,'Res.','f')
+        leg4.AddEntry(gr_pad2_full, 'bin stat #oplus shape #oplus flat','f')
         leg2.Draw("SAME")
         leg3.Draw("SAME")
+        leg4.Draw("SAME")
+
 
 
 	c.Update()
